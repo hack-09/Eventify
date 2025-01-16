@@ -1,0 +1,53 @@
+/* Global Navbar CSS */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #343a40;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  /* Navbar Brand */
+  .navbar-brand h1 {
+    font-size: 1.8rem;
+    color: white;
+  }
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    background-image: url('../../assets/timemanagement.png'); 
+    background-size: cover; /* Ensures the image covers the element */
+    background-position: center; /* Centers the image */
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }
+  
+  /* Navigation Items */
+  .navbar-links {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .nav-item {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 12px;
+    transition: color 0.3s;
+  }
+  
+  .nav-item:hover,
+  .nav-item.active {
+    background-color: #495057;
+    border-radius: 5px;
+  }
+  
