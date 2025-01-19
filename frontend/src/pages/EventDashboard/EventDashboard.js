@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchEvents } from "../../utils/api";
+import { debounce } from '../../utils/debounce';
 import EventCard from "../../components/EventCard/EventCard";
 import "./EventDashboard.css";
 
@@ -21,10 +22,10 @@ const EventDashboard = () => {
     }
   };
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
-  };
+  const handleFilterChange = debounce((newFilters) => {
+    setFilters(newFilters);
+    loadEvents(newFilters); // Assuming loadEvents accepts filters
+  }, 500);
 
   return (
     <div className="dashboard-container">

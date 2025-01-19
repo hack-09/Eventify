@@ -15,9 +15,6 @@ function Navbar() {
         <NavLink to="/" activeClassName="active" className="nav-item">
           Login
         </NavLink>
-        <NavLink to="/register" activeClassName="active" className="nav-item">
-          Register
-        </NavLink>
         <NavLink to="/dashboard" activeClassName="active" className="nav-item">
           Dashboard
         </NavLink>

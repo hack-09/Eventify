@@ -16,6 +16,7 @@ exports.createEvent = async (req, res) => {
             category,
             image: req.file ? req.file.path : null, // Cloudinary URL for the image
             createdBy: req.user.id,
+            attendees: [] // Initialize attendees array
         });
 
         await event.save();
@@ -36,6 +37,7 @@ exports.getEvents = async (req, res) => {
     }
 }
 
+// get event details with specific event id
 exports.getEventsDetails = async (req, res) => {
     try{
         const { id } = req.params; // Fetch eventId from route params
@@ -75,23 +77,57 @@ exports.deleteEvent = async (req, res) => {
     }
 };
 
-
-exports.addAttendee = async (req, res) => {
+exports.joinEvent = async (req, res) => {
     try {
-        const { eventId } = req.body;
-        const event = await Event.findById(eventId);
-        if (!event) return res.status(404).json({ error: 'Event not found' });
+        const { eventId } = req.params; // Extract event ID from the URL
 
-        if (!event.attendees.includes(req.user.id)) {
-            event.attendees.push(req.user.id);
-            await event.save();
-
-            // Emit real-time update
-            req.io.to(eventId).emit('attendeeUpdated');
+        // Validate that `req.user` exists (ensured by `protect` middleware)
+        if (!req.user) {
+            return res.status(401).json({ message: "User not authenticated" });
         }
 
-        res.status(200).json(event);
+        // Find the event
+        const event = await Event.findById(eventId).populate("attendees", "name email"); // Populate attendees for verification
+        if (!event) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        // Check if the user is already an attendee
+        const isAlreadyAttendee = event.attendees.some(
+            (attendee) => attendee._id.toString() === req.user._id.toString()
+        );
+
+        if (!isAlreadyAttendee) {
+            // Add the user to the attendees array
+            event.attendees.push(req.user._id);
+            await event.save();
+        }
+
+        res.status(200).json({
+            message: "Joined event successfully",
+            attendees: event.attendees,
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to add attendee' });
+        console.error("Error in joinEvent:", err);
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+};
+
+
+
+
+// In your Event Controller
+exports.getEventAttendees = async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const event = await Event.findById(eventId).populate('attendees', 'userId'); // Assuming 'attendees' is an array of user IDs or full user objects
+
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        res.status(200).json(event.attendees);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };

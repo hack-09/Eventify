@@ -1,37 +1,14 @@
 import React, { useState } from "react";
+import axios from 'axios';
 import EditEventPage from "../../pages/EditEventPage/EditEventPage";
 import { updateEvent, deleteEvent } from "../../utils/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getUserIdFromToken } from '../../utils/tokenHelper';
+import socket from '../../utils/socket';
 import './EventCard.css';
 
 const EventCard = ({ event, onEventUpdated }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [updatedEvent, setUpdatedEvent] = useState({
-    name: event.name,
-    description: event.description,
-    date: event.date,
-    time: event.time,
-    category: event.category,
-  });
-
-  const handleEdit = () => setIsEditing(true);
-  const handleClose = () => setIsEditing(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUpdatedEvent({ ...updatedEvent, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updateEvent(event._id, updatedEvent);
-      onEventUpdated(); // Refresh the event list
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Failed to update event:", err);
-    }
-  };
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this event?")) {
@@ -44,6 +21,31 @@ const EventCard = ({ event, onEventUpdated }) => {
     }
   };  
 
+  const joinEvent = async (eventId) => {
+    const userId = getUserIdFromToken(); // Extract userId from token
+    if (!userId) {
+      alert('Please log in to join events.');
+      return;
+    }else{
+      alert('You are now logging in');
+    }
+  
+    try {
+      const response = await axios.post(`http://localhost:5000/api/events/${eventId}/join`, { userId }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token in headers
+        },
+      });
+      alert(response.data.message);
+      console.log("Successfully joined event:", response.data);
+      navigate(`/event/${event._id}/join`);
+    } catch (error) {
+      console.error('Error joining event:', error);
+      alert(error.response?.data?.message || 'Failed to join event.');
+    }
+  };
+
+
   return (
     <div className="event-card">
       <h3>{event.name}</h3>
@@ -53,65 +55,10 @@ const EventCard = ({ event, onEventUpdated }) => {
       <p>Category: {event.category}</p>
       <Link to={`/event/edit/${event._id}`}>Edit Event</Link>
       <button type="button" onClick={handleDelete}>Delete</button>
-      <Link to={`/event/${event._id}`}>View Details</Link>
 
-      {isEditing && (
-          <>
-              <div className="modal-backdrop"></div>
-              <div className="modal">
-                  <form onSubmit={handleSubmit}>
-                      <label>
-                          Event Name:
-                          <input
-                              type="text"
-                              name="name"
-                              value={updatedEvent.name}
-                              onChange={handleChange}
-                          />
-                      </label>
-                      <label>
-                          Description:
-                          <textarea
-                              name="description"
-                              value={updatedEvent.description}
-                              onChange={handleChange}
-                          />
-                      </label>
-                      <label>
-                          Date:
-                          <input
-                              type="date"
-                              name="date"
-                              value={updatedEvent.date}
-                              onChange={handleChange}
-                          />
-                      </label>
-                      <label>
-                          Time:
-                          <input
-                              type="time"
-                              name="time"
-                              value={updatedEvent.time}
-                              onChange={handleChange}
-                          />
-                      </label>
-                      <label>
-                          Category:
-                          <input
-                              type="text"
-                              name="category"
-                              value={updatedEvent.category}
-                              onChange={handleChange}
-                          />
-                      </label>
-                      <button type="submit">Save Changes</button>
-                      <button type="button" onClick={handleClose}>
-                          Cancel
-                      </button>
-                  </form>
-              </div>
-          </>
-      )}
+      <Link to={`/event/${event._id}`}>Event Details</Link>
+
+      <button onClick={() => joinEvent(event._id)}>Join Events</button>
     </div>
   );
 };
