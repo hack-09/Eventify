@@ -113,8 +113,16 @@ exports.joinEvent = async (req, res) => {
     }
 };
 
+exports.getCreatorEvents = async (req, res) => {
+    try {
+        const creatorId = req.params.creatorId;
+        const events = await Event.find({ createdBy: creatorId }).populate('createdBy', 'name');
 
-
+        res.status(200).json(events);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
 
 // In your Event Controller
 exports.getEventAttendees = async (req, res) => {

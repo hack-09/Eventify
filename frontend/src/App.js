@@ -7,6 +7,7 @@ import EditEventPage from './pages/EditEventPage/EditEventPage';
 import LiveEventPage from './pages/LiveEvent/LiveEventPage';
 import EventDetails from './components/EventDetail/EventDetails';
 import EventDashboard from './pages/EventDashboard/EventDashboard';
+import ManageEventsPage from './pages/ManageEvents/ManageEventsPage';
 import CreateEventPage from './pages/Create/CreateEventPage';
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
                     <Route path="/dashboard" element={<EventDashboard />} />
                     <Route path="/event/edit/:eventId" element={<EditEventPage />} />
                     <Route path="/event/:eventId" element={<EventDetails/>} />
+                    <Route path="/manage-events" element={<ManageEventsPage/>} />
                     <Route path="/event/:id/join" element={<LiveEventPage />} />
                     <Route path="/create-event" element={<CreateEventPage />} />
                 </Routes>

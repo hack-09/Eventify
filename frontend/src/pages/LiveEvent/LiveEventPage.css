@@ -1,111 +1,186 @@
-.live-event-container {
-    font-family: Arial, sans-serif;
+/* General Styling */
+:root {
+    --primary-color: #023b77;
+    --secondary-color: #f4f4f9;
+    --accent-color: #d9534f;
+    --text-color: #333;
+    --bg-color: #f9f9f9;
+    --font-family: 'Arial', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Header */
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+}
+
+.event-header h1{
+    margin: 0;
+    color: #ccc;
+    font-size: 20px;
+}
+
+.event-header p{
+    color: #ccc;
+}
+
+.leave-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.leave-button:hover {
+    background-color: #c9302c;
+}
+
+/* Main Layout */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
     padding: 20px;
-    max-width: 900px;
-    margin: auto;
 }
 
-.event-details {
-    background: #f5f5f5;
+.left-column,
+.center-content,
+.right-column {
+    background: white;
     padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.event-details h1 {
-    margin: 0 0 10px;
-    color: #333;
+h2 {
+    font-size: 18px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
 }
 
-.event-details p {
-    margin: 5px 0;
-    color: #555;
-}
-
-.attendee-list {
-    margin-bottom: 20px;
-}
-
-.attendee-list h2 {
-    margin: 0 0 10px;
-    color: #333;
-}
-
-.attendee-list ul {
+/* Attendee Section */
+ul {
     list-style: none;
     padding: 0;
 }
 
-.attendee-list li {
-    margin: 5px 0;
-    padding: 5px 10px;
-    background: #e0f7fa;
+ul li {
+    background-color: var(--secondary-color);
+    padding: 10px;
+    margin-bottom: 10px;
     border-radius: 5px;
+    font-size: 14px;
 }
 
-.live-chat {
-    margin-bottom: 20px;
+/* Livestream Section */
+.livestream {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee;
+    color: #888;
+    font-size: 16px;
 }
 
-.live-chat h2 {
-    margin: 0 0 10px;
-    color: #333;
-}
-
+/* Chat Section */
 .chat-box {
     border: 1px solid #ccc;
-    border-radius: 10px;
-    max-height: 300px;
+    border-radius: 5px;
+    padding: 10px;
+    height: 200px;
     overflow-y: auto;
-    padding: 10px;
-    background: #f9f9f9;
-    margin-bottom: 10px;
+    background-color: white;
+    margin-bottom: 15px;
+    scroll-behavior: smooth;
 }
 
-.chat-message {
+.chat-container p {
     margin: 5px 0;
-    padding: 5px;
-    border-bottom: 1px solid #eee;
 }
 
-.chat-input {
-    display: flex;
-    gap: 10px;
+.chat-container strong {
+    color: var(--primary-color);
 }
 
-.chat-input input {
-    flex: 1;
+input[type="text"] {
+    width: calc(100% - 100px);
     padding: 10px;
+    margin-right: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 14px;
 }
 
-.chat-input button {
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
+button {
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
     cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-.chat-input button:hover {
-    background: #0056b3;
+button:hover {
+    background-color: #0056b3;
 }
 
-.action-buttons {
+/* Footer */
+footer {
+    background-color: #272626;
+    color: white;
     text-align: center;
+    padding: 15px;
+    margin-top: 20px;
 }
 
-.leave-event {
-    padding: 10px 20px;
-    background: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+footer a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 5px;
 }
 
-.leave-event:hover {
-    background: #e60000;
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .leave-button {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 50px);
+    }
+
+    .chat-box {
+        height: 150px;
+    }
 }

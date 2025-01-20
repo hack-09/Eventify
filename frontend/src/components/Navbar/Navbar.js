@@ -21,8 +21,8 @@ function Navbar() {
         <NavLink to="/create-event" activeClassName="active" className="nav-item">
           Create Event
         </NavLink>
-        <NavLink to="/event-list" activeClassName="active" className="nav-item">
-          Event List
+        <NavLink to="/manage-events" activeClassName="active" className="nav-item">
+          Manage Events
         </NavLink>
         <NavLink to="/profile" activeClassName="active" className="nav-item">
           Profile

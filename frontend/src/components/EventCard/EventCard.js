@@ -7,7 +7,7 @@ import { getUserIdFromToken } from '../../utils/tokenHelper';
 import socket from '../../utils/socket';
 import './EventCard.css';
 
-const EventCard = ({ event, onEventUpdated }) => {
+const EventCard = ({ event, showManagementOptions, onEventUpdated }) => {
   const navigate = useNavigate();
 
   const handleDelete = async () => {
@@ -49,15 +49,14 @@ const EventCard = ({ event, onEventUpdated }) => {
   return (
     <div className="event-card">
       <h3>{event.name}</h3>
-      <image src="../../assets\time-management.png" alt="Eventify Logo" className="logo" />
       <p>{event.description}</p>
       <p>{new Date(event.date).toLocaleString()}</p>
       <p>Category: {event.category}</p>
-      <Link to={`/event/edit/${event._id}`}>Edit Event</Link>
-      <button type="button" onClick={handleDelete}>Delete</button>
-
+      
+      
+      {showManagementOptions && <Link to={`/event/edit/${event._id}`}>Edit Event</Link>}
+      {showManagementOptions && <button type="button" onClick={handleDelete}>Delete</button>}
       <Link to={`/event/${event._id}`}>Event Details</Link>
-
       <button onClick={() => joinEvent(event._id)}>Join Events</button>
     </div>
   );

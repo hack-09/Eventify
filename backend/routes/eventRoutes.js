@@ -1,5 +1,5 @@
 const express = require('express');
-const { createEvent, getEvents, updateEvent, deleteEvent, getEventsDetails, joinEvent, getEventAttendees } = require('../controllers/eventController');
+const { createEvent, getEvents, updateEvent, deleteEvent, getEventsDetails, joinEvent, getEventAttendees, getCreatorEvents } = require('../controllers/eventController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 const multer = require('multer');
@@ -19,10 +19,11 @@ const upload = multer({ storage });
 
 // Event routes
 router.post('/', authMiddleware.protect, upload.single('image'), createEvent); // Create event with image upload
-router.get('/', authMiddleware.protect, getEvents); // Fetch events
+router.get('/', getEvents); // Fetch events
 router.put('/:id', authMiddleware.protect, upload.single('image'), updateEvent); // Update event with image upload
 router.delete('/:id', authMiddleware.protect, deleteEvent); // Delete event
 router.get('/:id', authMiddleware.protect, getEventsDetails); // Fetch event details
+router.get('/creator/:creatorId', authMiddleware.protect, getCreatorEvents); // Fetch event details
 
 // Join Event
 router.post('/:eventId/join', authMiddleware.protect, joinEvent);
