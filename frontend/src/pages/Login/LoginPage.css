@@ -5,9 +5,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 86.5vh;
     background-color: #f8f9fa;
-    /* background: linear-gradient(to bottom right, #4a90e2, #9013fe); */
+    background: linear-gradient(to bottom right, #4a90e2, #9013fe);
     margin: 0;
 }
 
@@ -20,6 +20,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    margin-inline: 20px;
 }
 
 /* Title styling */
@@ -102,3 +103,8 @@
     text-decoration: underline; /* Optional hover effect */
   }
   
+@media (max-width: 768px) {
+    .login-container{
+        height: 89vh;
+    }
+}

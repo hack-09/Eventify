@@ -34,22 +34,32 @@
 /* Navigation Links */
 .navbar-links {
   display: flex;
-  gap: 15px;
+  gap: 10px;
+  align-items: center;
   transition: all 0.3s ease;
 }
-
 .nav-item {
   color: white;
   text-decoration: none;
   font-size: 1rem;
-  padding: 8px 12px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: color 0.3s, background-color 0.3s;
+  border-radius: 5px;
 }
 
 .nav-item:hover,
-.nav-item.active {
-  background-color: #495057;
-  border-radius: 5px;
+.nav-item:focus {
+  background-color: #6c757d; /* Slightly lighter shade for better contrast */
+  color: white;
+  outline: 2px solid #6c757d; /* Accessibility focus outline */
+}
+
+
+.nav-item i {
+  margin-right: 8px; /* Add space between icon and text */
 }
 
 .logout-btn {
@@ -90,25 +100,39 @@
 }
 
 @media (max-width: 768px) {
+  .nav-item {
+    text-align: center;
+    background-color: #495057;
+  }
+
   .navbar-links {
     display: none;
-    flex-direction: row;
     position: absolute;
-    top: 70px;
+    top: 80px;
     right: 0;
     background-color: #343a40;
-    width: 100%;
-    padding: 30px;
+    width: 95%;
+    padding: 3%;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   }
 
   .navbar-links.show-menu {
     display: flex;
+    transform: translateY(0);
+    opacity: 1;
   }
 
   .nav-item {
+    margin-right: 0;
     text-align: center;
     width: 100%;
     padding: 10px 0;
+  }
+
+  .nav-item span {
+    display: none; /* Hide text in mobile view */
   }
 
   .navbar-toggle {

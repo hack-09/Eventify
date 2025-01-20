@@ -81,12 +81,21 @@ const EditEventPage = () => {
         </label>
         <label>
           Category:
-          <input
-            type="text"
+          <select
+            id="category"
             name="category"
             value={formData.category}
             onChange={handleChange}
-          />
+            required >
+              <option value="" disabled>Select Category</option>
+              <option value="Tech Talks">Tech Talks</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Webinars">Webinars</option>
+              <option value="Conference">Conference</option>
+              <option value="Meetup">Meetup</option>
+              <option value="Health Awareness">Health Awareness</option>
+              <option value="Virtual Concerts">Virtual Concerts</option>
+          </select>
         </label>
         <button type="submit">Save Changes</button>
         <button type="button" onClick={() => navigate("/dashboard")}>

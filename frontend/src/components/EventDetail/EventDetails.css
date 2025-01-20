@@ -1,74 +1,83 @@
-/* EventDetails.css */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 800px;
-    margin: 30px auto;
+/* General container */
+.event-details-container {
+    background: linear-gradient(to bottom right, rgb(38, 79, 71), rgb(123, 123, 158));
+    min-height: 88.5vh;
     padding: 20px;
-    background-color: #ffffff;
+}
+  
+  /* Content wrapper for layout */
+  .event-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 90%;
+    margin: auto;
+    padding: 20px;
+    background: linear-gradient(to bottom right, rgb(161, 171, 169), white, rgb(193, 190, 190));
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  @media (min-width: 768px) {
+    .event-content {
+      flex-direction: row;
+      gap: 40px;
+      align-items: center;
+    }
+  }
+  
+  /* Event details styling */
+  .event-details {
+    flex: 1;
+  }
+  
+  .event-title {
     font-size: 2.5rem;
+    color: #333;
     margin-bottom: 10px;
-}
-
-p {
+  }
+  
+  .event-date-time {
+    font-size: 1.2rem;
     color: #555;
-    font-size: 1.1rem;
-    line-height: 1.6;
     margin-bottom: 20px;
-}
-
-h3 {
-    color: #444;
-    font-size: 1.8rem;
-    margin-top: 30px;
+  }
+  
+  .event-description-title {
+    font-size: 1.5rem;
+    color: #013874;
     margin-bottom: 10px;
-    border-bottom: 2px solid #ff6f61;
+    border-bottom: 2px solid #84c0ff;
     display: inline-block;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    color: #444;
-    font-size: 1.1rem;
-    padding: 10px;
-    margin: 5px 0;
-    background-color: #f4f4f4;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-}
-
-li:hover {
-    transform: scale(1.02);
-    background-color: #ffefeb;
-}
-
-button {
-    background-color: #ff6f61;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
+  }
+  
+  .event-description {
     font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  /* Event poster styling */
+  .event-poster-wrapper {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  
+  .event-poster {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
 
-button:hover {
-    background-color: #ff5047;
-}
+.event-poster:hover
+{
+    max-width: 610px;
+}  
+  @media (min-width: 768px) {
+    .event-poster-wrapper {
+      text-align: right;
+    }
+  }
+  

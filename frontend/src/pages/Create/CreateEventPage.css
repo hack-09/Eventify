@@ -1,6 +1,6 @@
 /* CreateEventPage.css */
 body{
-    /* background: linear-gradient(to bottom right, #002b5b, #04aa68); */
+    background: linear-gradient(to bottom right, #0c2e54, #346350);
 }
 /* General container styling */
 .create-event-container {
@@ -8,7 +8,7 @@ body{
     margin: 50px auto;
     padding: 20px;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background: linear-gradient(to bottom right, #898888, #f4fffa);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     font-family: 'Arial', sans-serif;
   }
@@ -17,7 +17,7 @@ body{
   .create-event-title {
     text-align: center;
     font-size: 2rem;
-    color: #333;
+    color: #000000;
     margin-bottom: 20px;
   }
   
@@ -31,7 +31,7 @@ body{
   
   .create-event-form label {
     font-size: 1rem;
-    color: #555;
+    color: #000000;
     margin-bottom: 5px;
   }
   
