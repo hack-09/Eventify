@@ -4,7 +4,6 @@ import debounce from "lodash.debounce";
 import { fetchEvents } from "../../utils/api";
 import "./EventDashboard.css"; // Importing custom CSS for styles
 
-
 const EventDashboard = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);

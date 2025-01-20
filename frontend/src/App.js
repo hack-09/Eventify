@@ -9,6 +9,7 @@ import EventDetails from './components/EventDetail/EventDetails';
 import EventDashboard from './pages/EventDashboard/EventDashboard';
 import ManageEventsPage from './pages/ManageEvents/ManageEventsPage';
 import CreateEventPage from './pages/Create/CreateEventPage';
+import PrivateRoute from './utils/PrivateRoute';
 
 const App = () => {
     return (
@@ -23,7 +24,7 @@ const App = () => {
                     <Route path="/event/:eventId" element={<EventDetails/>} />
                     <Route path="/manage-events" element={<ManageEventsPage/>} />
                     <Route path="/event/:id/join" element={<LiveEventPage />} />
-                    <Route path="/create-event" element={<CreateEventPage />} />
+                    <Route path="/create-event" element={<PrivateRoute> <CreateEventPage /> </PrivateRoute>} />
                 </Routes>
             </Router>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { login } from '../../services/authService';
@@ -7,6 +7,14 @@ import './LoginPage.css';
 const LoginPage = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: '', password: '' });
+
+    useEffect(() => {
+        // Check if the user is already logged in
+        const token = localStorage.getItem("token");
+        if (token) {
+          navigate("/dashboard"); // Redirect to dashboard if logged in
+        }
+      }, [navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
