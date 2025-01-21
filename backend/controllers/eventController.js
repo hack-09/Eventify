@@ -55,17 +55,50 @@ exports.getEventsDetails = async (req, res) => {
 // Update an event
 exports.updateEvent = async (req, res) => {
     try {
-        const event = await Event.findOneAndUpdate(
-            { _id: req.params.id, createdBy: req.user.id },
-            req.body,
-            { new: true }
-        );
-        if (!event) return res.status(404).json({ error: 'Event not found or unauthorized' });
-        res.status(200).json(event);
+      // Fetch the existing event to get the current image details
+      const event = await Event.findOne({ _id: req.params.id, createdBy: req.user.id });
+      if (!event) {
+        return res.status(404).json({ error: "Event not found or unauthorized" });
+      }
+  
+      // If an image file is uploaded, handle the update
+      if (req.file) {
+        // Remove the previous image from Cloudinary if it exists
+        console.log("Image file is present to upload to cloudinary");
+        if (event.image) {
+          try {
+            const publicId = event.image.split('/events/')[1].split('.')[0]; // Extract the public_id from the URL
+            await cloudinary.uploader.destroy(`events/${publicId}`); // Delete the image
+          } catch (error) {
+            console.error('Failed to delete old image from Cloudinary:', error);
+          }
+        }
+  
+        // Upload the new image to Cloudinary
+        const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
+          folder: "events", // Specify folder in Cloudinary
+        });
+  
+        req.body.image = uploadedImage.secure_url; // Use the secure_url as a string
+      }
+      else{
+        console.log("No file is present to upload to cloudinary");
+      }
+  
+      // Update the event with the new details
+      const updatedEvent = await Event.findOneAndUpdate(
+        { _id: req.params.id, createdBy: req.user.id },
+        req.body,
+        { new: true }
+      );
+  
+      res.status(200).json(updatedEvent);
     } catch (err) {
-        res.status(500).json({ error: 'Failed to update event' });
+      console.error("Failed to update event:", err);
+      res.status(500).json({ error: "Failed to update event" });
     }
-};
+  };
+  
 
 // Delete an event
 exports.deleteEvent = async (req, res) => {
@@ -99,7 +132,10 @@ exports.deleteEvent = async (req, res) => {
         }
 
         // Delete the event from the database
-        await Event.findByIdAndDelete(req.params.id);
+        await Event.findOneAndDelete(
+            { _id: req.params.id, createdBy: req.user.id },
+            { new: true }
+        );
 
         res.status(200).json({ message: 'Event deleted successfully' });
     } catch (err) {

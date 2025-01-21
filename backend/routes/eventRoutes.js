@@ -22,7 +22,7 @@ router.post('/', authMiddleware.protect, upload.single('image'), createEvent); /
 router.get('/', getEvents); // Fetch events
 router.put('/:id', authMiddleware.protect, upload.single('image'), updateEvent); // Update event with image upload
 router.delete('/:id', authMiddleware.protect, deleteEvent); // Delete event
-router.get('/:id', authMiddleware.protect, getEventsDetails); // Fetch event details
+router.get('/:id', getEventsDetails); // Fetch event details
 router.get('/creator/:creatorId', authMiddleware.protect, getCreatorEvents); // Fetch event details
 
 // Join Event

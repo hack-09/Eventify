@@ -21,14 +21,8 @@ const LoginPage = () => {
     };
 
     const handleGuestLogin = async () => {
-        try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/guest-login`);
-            localStorage.setItem('token', response.data.token);
-            alert('Logged in as guest!');
-            navigate('/dashboard');
-        } catch (error) {
-            alert('Failed to login as guest.');
-        }
+        alert('Logged in as guest!');
+        navigate('/dashboard');
     };
 
     const handleSubmit = async (e) => {

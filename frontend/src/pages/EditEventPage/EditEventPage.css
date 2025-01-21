@@ -62,7 +62,21 @@ textarea{
 .edit-event-page button[type="button"]:hover {
   background-color: #5a6268;
 }
-  
+
+.image-preview-container {
+  margin-top: 15px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.image-preview {
+  max-width: 300px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 768px) {
   textarea{
     height: 20vh;

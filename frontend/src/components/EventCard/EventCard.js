@@ -12,22 +12,22 @@ const EventCard = ({ event, showManagementOptions, onEventUpdated }) => {
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this event?")) {
-      try {
-        await deleteEvent(event._id);
-        onEventUpdated(); // Refresh the event list
-      } catch (err) {
-        console.error("Failed to delete event:", err);
-      }
+        try {
+            await deleteEvent(event._id);
+            if (onEventUpdated) {
+                onEventUpdated(event._id); // Pass the deleted event ID
+            }
+        } catch (err) {
+            console.error("Failed to delete event:", err);
+        }
     }
-  };  
+}; 
 
   const joinEvent = async (eventId) => {
     const userId = getUserIdFromToken(); // Extract userId from token
     if (!userId) {
       alert('Please log in to join events.');
       return;
-    }else{
-      alert('You are now logging in');
     }
   
     try {

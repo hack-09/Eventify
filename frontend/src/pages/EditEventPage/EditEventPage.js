@@ -11,17 +11,22 @@ const EditEventPage = () => {
     description: "",
     date: "",
     category: "",
+    image: null, // Add image to form data
   });
+  const [imagePreview, setImagePreview] = useState(null); // For image preview
 
   useEffect(() => {
     const loadEvent = async () => {
       try {
-        console.log("Event ID : ",eventId);
+        console.log("Event ID : ", eventId);
         const response = await fetchEventDetails(eventId); // Fetch single event details
         const eventData = response.data;
+
         // Convert the date to the ISO format required for datetime-local
         const formattedDate = new Date(eventData.date).toISOString().slice(0, 16); // Keep only "YYYY-MM-DDTHH:mm"
+
         setFormData({ ...eventData, date: formattedDate });
+        setImagePreview(eventData.image); // Set the existing image as preview
       } catch (err) {
         console.error("Failed to load event:", err);
       }
@@ -35,10 +40,29 @@ const EditEventPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData({ ...formData, image: file });
+
+    // Generate preview URL
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await updateEvent(eventId, formData);
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "attendees") return; 
+        formDataToSend.append(key, value);
+      });
+
+      await updateEvent(eventId, formDataToSend);
       alert("Event updated successfully!");
       navigate("/dashboard"); // Navigate back to the dashboard
     } catch (err) {
@@ -49,7 +73,7 @@ const EditEventPage = () => {
   return (
     <div className="edit-event-page">
       <h1>Edit Event</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <label>
           Event Name:
           <input
@@ -59,6 +83,7 @@ const EditEventPage = () => {
             onChange={handleChange}
           />
         </label>
+
         <label>
           Description:
           <textarea
@@ -69,16 +94,17 @@ const EditEventPage = () => {
         </label>
 
         <label htmlFor="date">
-          Event Date & Time : 
+          Event Date & Time:
           <input
-              type="datetime-local"
-              id="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
+            type="datetime-local"
+            id="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
           />
         </label>
+
         <label>
           Category:
           <select
@@ -86,19 +112,45 @@ const EditEventPage = () => {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            required >
-              <option value="" disabled>Select Category</option>
-              <option value="Tech Talks">Tech Talks</option>
-              <option value="Workshop">Workshop</option>
-              <option value="Webinars">Webinars</option>
-              <option value="Conference">Conference</option>
-              <option value="Meetup">Meetup</option>
-              <option value="Health Awareness">Health Awareness</option>
-              <option value="Virtual Concerts">Virtual Concerts</option>
+            required
+          >
+            <option value="" disabled>
+              Select Category
+            </option>
+            <option value="Tech Talks">Tech Talks</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Webinars">Webinars</option>
+            <option value="Conference">Conference</option>
+            <option value="Meetup">Meetup</option>
+            <option value="Health Awareness">Health Awareness</option>
+            <option value="Virtual Concerts">Virtual Concerts</option>
           </select>
         </label>
+
+        <label>
+          Event Image:
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </label>
+
+        {/* Display image preview */}
+        {imagePreview && (
+          <div className="image-preview-container">
+            <img
+              src={imagePreview}
+              alt="Event Preview"
+              className="image-preview"
+            />
+          </div>
+        )}
+
         <button type="submit">Save Changes</button>
-        <button type="button" onClick={() => navigate("/dashboard")}>
+        <button type="button" onClick={() => navigate("/manage-events")}>
           Cancel
         </button>
       </form>

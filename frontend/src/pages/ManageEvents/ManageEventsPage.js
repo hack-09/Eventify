@@ -25,15 +25,8 @@ const ManageEventsPage = () => {
     }
   };
 
-  const handledeleteEvent = async (eventId) => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      try {
-        await deleteEvent(eventId); // Call delete API
-        setUserEvents((prev) => prev.filter((event) => event._id !== eventId)); // Remove event from state
-      } catch (err) {
-        console.error("Failed to delete event:", err);
-      }
-    }
+  const handleEventDeletion = (deletedEventId) => {
+    setUserEvents((prevEvents) => prevEvents.filter((event) => event._id !== deletedEventId));
   };
 
   return (
@@ -50,7 +43,7 @@ const ManageEventsPage = () => {
               key={event._id}
               event={event}
               showManagementOptions
-              onDelete={() => handledeleteEvent(event._id)}
+              onEventUpdated={handleEventDeletion} // Pass the deletion handler
             />
           ))}
         </div>
