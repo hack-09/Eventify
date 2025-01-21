@@ -45,7 +45,7 @@ const EventDashboard = () => {
       if (filters.type === "upcoming" && eventDate < currentDate) return false;
       if (filters.type === "past" && eventDate > currentDate) return false;
 
-      if(event.title){
+      if(event.name){
         if (filters.title && !event.name.toLowerCase().includes(filters.title.toLowerCase())) {
           return false;
         }

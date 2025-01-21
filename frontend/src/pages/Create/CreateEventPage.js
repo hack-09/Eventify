@@ -7,9 +7,11 @@ const CreateEventPage = () => {
         name: '',
         description: '',
         date: '',
-        category: '', 
+        category: '',
         image: null,
     });
+    const [imagePreview, setImagePreview] = useState(null); // For image preview
+    const [isLoading, setIsLoading] = useState(false); // Loading state
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -17,7 +19,17 @@ const CreateEventPage = () => {
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, image: e.target.files[0] });
+        const file = e.target.files[0];
+        setFormData({ ...formData, image: file });
+
+        // Generate preview URL
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setImagePreview(reader.result);
+            reader.readAsDataURL(file);
+        } else {
+            setImagePreview(null); // Clear preview if no file is selected
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -27,6 +39,8 @@ const CreateEventPage = () => {
             alert('Please fill in all required fields.');
             return;
         }
+
+        setIsLoading(true); // Set loading to true
 
         try {
             const formDataToSend = new FormData();
@@ -40,19 +54,26 @@ const CreateEventPage = () => {
                 name: '',
                 description: '',
                 date: '',
-                category: '', 
-                image: null,  //  field for image upload
+                category: '',
+                image: null,
             });
+            setImagePreview(null); // Clear preview after successful submission
         } catch (error) {
             console.error('Failed to create event:', error);
             alert('Failed to create event. Please try again.');
+        } finally {
+            setIsLoading(false); // Set loading to false
         }
     };
 
     return (
         <div className="create-event-container">
             <h1 className="create-event-title">Create New Event</h1>
-            <form className="create-event-form" onSubmit={handleSubmit} encType="multipart/form-data">
+            <form
+                className="create-event-form"
+                onSubmit={handleSubmit}
+                encType="multipart/form-data"
+            >
                 <label htmlFor="name">Event Name</label>
                 <input
                     type="text"
@@ -92,7 +113,9 @@ const CreateEventPage = () => {
                     onChange={handleChange}
                     required
                 >
-                    <option value="" disabled>Select Category</option>
+                    <option value="" disabled>
+                        Select Category
+                    </option>
                     <option value="Tech Talks">Tech Talks</option>
                     <option value="Workshop">Workshop</option>
                     <option value="Webinars">Webinars</option>
@@ -103,18 +126,27 @@ const CreateEventPage = () => {
                 </select>
 
                 <label htmlFor="image">Event Image</label>
-                <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                />
+                <div className="image-input-container">
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        required
+                    />
+                    {imagePreview && (
+                        <div className="image-preview-container">
+                            <img src={imagePreview} alt="Event Preview" className="image-preview" />
+                        </div>
+                    )}
+                </div>
 
-                <button type="submit" className="create-event-button">
-                    Create Event
+                <button type="submit" className="create-event-button" disabled={isLoading}>
+                    {isLoading ? 'Submitting...' : 'Create Event'}
                 </button>
             </form>
+            {isLoading && <div className="loading-indicator">Loading...</div>}
         </div>
     );
 };
