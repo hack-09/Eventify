@@ -7,4 +7,10 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET, // From Cloudinary Dashboard
 });
 
-module.exports = cloudinary;
+cloudinary.uploader.destroy('events/njdwya3hb8elecfghnzh')
+  .then((result) => {
+    console.log('Image deleted successfully:', result);
+  })
+  .catch((error) => {
+    console.error('Error deleting image:', error);
+  });

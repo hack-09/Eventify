@@ -7,4 +7,11 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET, // From Cloudinary Dashboard
 });
 
-module.exports = cloudinary;
+cloudinary.uploader.upload("./timemanagement.png"
+, { folder: 'events' })
+  .then((result) => {
+    console.log('Image uploaded successfully:', result);
+  })
+  .catch((error) => {
+    console.error('Error uploading image:', error);
+  });

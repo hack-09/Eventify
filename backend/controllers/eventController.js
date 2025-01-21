@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const cloudinary = require('../config/cloudinary');
 
 // Create an event
 exports.createEvent = async (req, res) => {
@@ -69,10 +70,40 @@ exports.updateEvent = async (req, res) => {
 // Delete an event
 exports.deleteEvent = async (req, res) => {
     try {
-        const event = await Event.findOneAndDelete({ _id: req.params.id, createdBy: req.user.id });
-        if (!event) return res.status(404).json({ error: 'Event not found or unauthorized' });
+        const event = await Event.findById(req.params.id);
+
+        if (!event) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        // Ensure only the creator can delete the event
+        if (event.createdBy.toString() !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized to delete this event' });
+        }
+
+        console.log("public id will be printed ");
+        // Delete the image from Cloudinary
+        if (event.image) {
+            const imageUrl = event.image;
+            const publicId = imageUrl.split('/events/')[1].split('.')[0];
+            public = 'events/' + publicId;     // Remove the file extension
+
+            console.log(public);
+            try {
+                const result = await cloudinary.uploader.destroy(public);
+                console.log("public id : ",public);
+                console.log('Image deleted from Cloudinary:', result);
+            } catch (error) {
+                console.error('Failed to delete image from Cloudinary:', error);
+            }
+        }
+
+        // Delete the event from the database
+        await Event.findByIdAndDelete(req.params.id);
+
         res.status(200).json({ message: 'Event deleted successfully' });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Failed to delete event' });
     }
 };
