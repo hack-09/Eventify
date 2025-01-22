@@ -15,8 +15,8 @@ const connectDB = async () => {
     try {
         // Attempt to connect to MongoDB with the provided URI and options
         const conn = await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true, // Ensures the use of the new URL parser to handle connection strings
-            useUnifiedTopology: true, // Enables the new unified topology engine for better server discovery and monitoring
+            useNewUrlParser: false, // Ensures the use of the new URL parser to handle connection strings
+            useUnifiedTopology: false, // Enables the new unified topology engine for better server discovery and monitoring
         });
 
         // Log a success message with the host of the connected database

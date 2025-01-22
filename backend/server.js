@@ -36,7 +36,7 @@ connectDB();
 // Middleware setup
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST','PUT','DELETE']
 })); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
 
