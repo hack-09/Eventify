@@ -34,7 +34,6 @@ const EventCard = ({ event, showManagementOptions, onEventUpdated }) => {
     try {
       const response = await joiningEvent(eventId, userId);  // Call API to join event with eventId and userId
       alert(response.data.message);  // Show success message
-      console.log("Successfully joined event:", response.data);  // Log success response
       navigate(`/event/${event._id}/join`);  // Navigate to the event join page
     } catch (error) {
       console.error('Error joining event:', error);  // Log error if joining fails

@@ -27,7 +27,6 @@ const LiveEventPage = () => {
           try {
             const { data } = await fetchEventDetails(eventId); // Fetch single event details
             setEvent(data);
-            console.log(data);
           } catch (err) {
             console.error("Failed to fetch event details:", err);
           }
