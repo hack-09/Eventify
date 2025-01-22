@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchCreatorEvents, deleteEvent } from "../../utils/api"; // API to fetch user's events and delete event
+import { fetchCreatorEvents } from "../../utils/api"; // API to fetch user's events and delete event
 import { getUserIdFromToken } from "../../utils/tokenHelper"; // Helper function to extract userId from token string
 import EventCard from "../../components/EventCard/EventCard";
 import "./ManageEventsPage.css";
@@ -11,6 +11,7 @@ const ManageEventsPage = () => {
 
   useEffect(() => {
     loadUserEvents();
+    // eslint-disable-next-line
   }, []);
 
   const loadUserEvents = async () => {
