@@ -74,7 +74,6 @@ const eventSocket = (io) => {
             });
 
             socket.join(eventId);
-            console.log(`User joined event: ${username}, Event: ${eventName}`);
         });
 
         // Handle user leaving an event
@@ -95,7 +94,6 @@ const eventSocket = (io) => {
                 count: eventsAttendees[eventId]?.length || 0,
             });
 
-            console.log(`User left event: ${userId}, Event: ${eventId}`);
         });
 
         // Handle socket disconnection
@@ -112,9 +110,8 @@ const eventSocket = (io) => {
                     count: eventsAttendees[eventId]?.length || 0,
                 });
 
-                console.log(`Client disconnected: ${userId} from event: ${eventId}`);
             } else {
-                console.log(`Client disconnected: ${socket.id}`);
+                console.log(`Client disconnected`);
             }
         });
     });
