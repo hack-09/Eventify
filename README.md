@@ -163,5 +163,3 @@ For queries, suggestions, or feedback, reach out to us:
 ### 📅 **Event Creation Page**  
 *Create events with customizable options.*  
 ![Event Creation Screenshot](https://github.com/user-attachments/assets/57fc392d-5004-479d-a153-141f9b477663)
-
-
