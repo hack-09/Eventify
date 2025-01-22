@@ -12,6 +12,11 @@ export const login = async (userData) => {
     return response.data;
 };
 
+export const guestLogin = async (userData) => {
+    const response = await axios.post(`${API_URL}/auth/guest-login`, userData);
+    return response.data;
+}
+
 export const getProfile = async (token) => {
     const response = await axios.get(`${API_URL}/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` },

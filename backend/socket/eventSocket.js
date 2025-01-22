@@ -1,9 +1,22 @@
-const User = require('../models/User');
-const Event = require('../models/Event');
+/**
+ * eventSocket.js: Socket.IO event handling for real-time event management.
+ * This module sets up socket event listeners for joining, leaving events,
+ * and updating attendee lists and counts in real-time.
+ */
 
-const eventsAttendees = {}; // Store attendees for each event
+const User = require('../models/User'); // Importing User model
+const Event = require('../models/Event'); // Importing Event model
+
+// Object to store attendees for each event
+const eventsAttendees = {};
 
 const eventSocket = (io) => {
+
+    /**
+     * Fetches user details by userId.
+     * @param {string} userId - ID of the user.
+     * @returns {Promise<string>} - Returns the user's name or 'Unknown User' in case of an error.
+     */
     const getUserDetails = async (userId) => {
         try {
             const user = await User.findById(userId);
@@ -14,6 +27,11 @@ const eventSocket = (io) => {
         }
     };
 
+    /**
+     * Fetches event name by eventId.
+     * @param {string} eventId - ID of the event.
+     * @returns {Promise<string>} - Returns the event name or 'Unknown Event' in case of an error.
+     */
     const getEventName = async (eventId) => {
         try {
             const event = await Event.findById(eventId);
@@ -25,10 +43,9 @@ const eventSocket = (io) => {
     };
 
     io.on('connection', (socket) => {
-        // console.log(`New client connected: ${socket.id}`);
-        socket.on('joinEvent', async ({ eventId, userId }) => {
-            // console.log('joinEvent called with:', { eventId, userId });
 
+        // Handle user joining an event
+        socket.on('joinEvent', async ({ eventId, userId }) => {
             if (!eventId || !userId) {
                 console.error('Invalid eventId or userId received.');
                 socket.emit('error', { message: 'Invalid eventId or userId' });
@@ -40,11 +57,15 @@ const eventSocket = (io) => {
 
             socket.userData = { eventId, userId };
 
+            // Initialize attendee list if not already present for the event
             if (!eventsAttendees[eventId]) eventsAttendees[eventId] = [];
+
+            // Avoid duplicate entries
             if (!eventsAttendees[eventId].find((attendee) => attendee.userId === userId)) {
                 eventsAttendees[eventId].push({ userId, username });
             }
 
+            // Emit updated attendee list and count to all sockets in the same event
             io.to(eventId).emit('updateAttendeeListAndCount', {
                 eventId,
                 eventName,
@@ -56,9 +77,8 @@ const eventSocket = (io) => {
             console.log(`User joined event: ${username}, Event: ${eventName}`);
         });
 
+        // Handle user leaving an event
         socket.on('leaveEvent', ({ eventId, userId }) => {
-            console.log('leaveEvent called with:', { eventId, userId });
-
             if (!eventId || !userId) {
                 console.error('Invalid eventId or userId in leaveEvent.');
                 return;
@@ -68,6 +88,7 @@ const eventSocket = (io) => {
                 eventsAttendees[eventId] = eventsAttendees[eventId].filter((attendee) => attendee.userId !== userId);
             }
 
+            // Emit updated attendee list and count to all sockets in the same event
             io.to(eventId).emit('updateAttendeeListAndCount', {
                 eventId,
                 attendees: eventsAttendees[eventId] || [],
@@ -77,12 +98,14 @@ const eventSocket = (io) => {
             console.log(`User left event: ${userId}, Event: ${eventId}`);
         });
 
+        // Handle socket disconnection
         socket.on('disconnect', () => {
             const { eventId, userId } = socket.userData || {};
 
             if (eventId && userId && eventsAttendees[eventId]) {
                 eventsAttendees[eventId] = eventsAttendees[eventId].filter((attendee) => attendee.userId !== userId);
 
+                // Emit updated attendee list and count to all sockets in the same event
                 io.to(eventId).emit('updateAttendeeListAndCount', {
                     eventId,
                     attendees: eventsAttendees[eventId] || [],
