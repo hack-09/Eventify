@@ -17,6 +17,7 @@ const EventDashboard = () => {
 
   useEffect(() => {
     loadEvents();
+    // eslint-disable-next-line
   }, [filters]);
 
   const loadEvents = async () => {

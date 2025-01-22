@@ -12,7 +12,7 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = await register(formData);
+            await register(formData);
             alert('Registration successful! Please log in.');
         } catch (error) {
             alert('Registration failed. Please try again.');
