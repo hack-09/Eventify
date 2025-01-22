@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+// Use environment variable for the API base URL
+const API = axios.create({ baseURL: `${process.env.REACT_APP_API_CALL}/api` });
 
 // Add Authorization header
 API.interceptors.request.use((req) => {

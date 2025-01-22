@@ -5,7 +5,7 @@ import { fetchEventDetails } from '../../utils/api';
 import io from 'socket.io-client';
 import './LiveEventPage.css';
 
-const socket = io('http://localhost:5000'); // Replace with your backend URL
+const socket = io(`${process.env.REACT_APP_API_CALL}`); // Replace with your backend URL
 
 const LiveEventPage = () => {
     const { id: eventId } = useParams(); 
