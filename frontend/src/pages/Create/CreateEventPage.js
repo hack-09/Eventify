@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createEvent } from '../../utils/api';
+import { getUserIdFromToken } from '../../utils/tokenHelper';
 import './CreateEventPage.css';
 
 const CreateEventPage = () => {
@@ -34,6 +35,11 @@ const CreateEventPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const userId = getUserIdFromToken(); // Extract userId from token
+        if (!userId) {
+            alert('Please log in to use this feature.');
+            return;
+        }
 
         if (!formData.name || !formData.description || !formData.date || !formData.category) {
             alert('Please fill in all required fields.');

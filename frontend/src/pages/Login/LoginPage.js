@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { login } from '../../services/authService';
+import { guestLogin, login } from '../../services/authService';
 import './LoginPage.css'; 
 
 const LoginPage = () => {
@@ -20,9 +20,15 @@ const LoginPage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleGuestLogin = async () => {
-        alert('Logged in as guest!');
-        navigate('/dashboard');
+    const handleGuestLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const data = await guestLogin(formData);
+            localStorage.setItem('token', data.token);
+            navigate('/dashboard');
+        } catch (error) {
+            alert('Login failed. Please try again.');
+        }
     };
 
     const handleSubmit = async (e) => {
