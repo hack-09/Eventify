@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import axios from 'axios';
-import EditEventPage from "../../pages/EditEventPage/EditEventPage";
-import { updateEvent, deleteEvent } from "../../utils/api";
+import {  deleteEvent, joiningEvent } from "../../utils/api";
 import { Link, useNavigate } from "react-router-dom";
 import { getUserIdFromToken } from '../../utils/tokenHelper';
-import socket from '../../utils/socket';
 import './EventCard.css';
 
 const EventCard = ({ event, showManagementOptions, onEventUpdated }) => {
@@ -31,11 +29,7 @@ const EventCard = ({ event, showManagementOptions, onEventUpdated }) => {
     }
   
     try {
-      const response = await axios.post(`http://localhost:5000/api/events/${eventId}/join`, { userId }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token in headers
-        },
-      });
+      const response = await joiningEvent(eventId,userId);
       alert(response.data.message);
       console.log("Successfully joined event:", response.data);
       navigate(`/event/${event._id}/join`);

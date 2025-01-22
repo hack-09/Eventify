@@ -11,27 +11,23 @@ const EditEventPage = () => {
     description: "",
     date: "",
     category: "",
-    image: null, // Add image to form data
+    image: null,
   });
-  const [imagePreview, setImagePreview] = useState(null); // For image preview
+  const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false); // Loading state
 
   useEffect(() => {
     const loadEvent = async () => {
       try {
-        console.log("Event ID : ", eventId);
-        const response = await fetchEventDetails(eventId); // Fetch single event details
+        const response = await fetchEventDetails(eventId);
         const eventData = response.data;
-
-        // Convert the date to the ISO format required for datetime-local
-        const formattedDate = new Date(eventData.date).toISOString().slice(0, 16); // Keep only "YYYY-MM-DDTHH:mm"
-
+        const formattedDate = new Date(eventData.date).toISOString().slice(0, 16);
         setFormData({ ...eventData, date: formattedDate });
-        setImagePreview(eventData.image); // Set the existing image as preview
+        setImagePreview(eventData.image);
       } catch (err) {
         console.error("Failed to load event:", err);
       }
     };
-
     loadEvent();
   }, [eventId]);
 
@@ -43,8 +39,6 @@ const EditEventPage = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData({ ...formData, image: file });
-
-    // Generate preview URL
     if (file) {
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result);
@@ -54,26 +48,41 @@ const EditEventPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
     try {
       const formDataToSend = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (key === "attendees") return; 
+        if (key === "attendees") return;
         formDataToSend.append(key, value);
       });
 
       await updateEvent(eventId, formDataToSend);
       alert("Event updated successfully!");
-      navigate("/dashboard"); // Navigate back to the dashboard
+      navigate("/manage-events");
     } catch (err) {
       console.error("Failed to update event:", err);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
   return (
     <div className="edit-event-page">
       <h1>Edit Event</h1>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
+
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+          <p>Updating event, please wait...</p>
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+        className={loading ? "form-disabled" : ""}
+      >
         <label>
           Event Name:
           <input
@@ -81,6 +90,7 @@ const EditEventPage = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
+            disabled={loading}
           />
         </label>
 
@@ -90,6 +100,7 @@ const EditEventPage = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
+            disabled={loading}
           ></textarea>
         </label>
 
@@ -102,6 +113,7 @@ const EditEventPage = () => {
             value={formData.date}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </label>
 
@@ -113,6 +125,7 @@ const EditEventPage = () => {
             value={formData.category}
             onChange={handleChange}
             required
+            disabled={loading}
           >
             <option value="" disabled>
               Select Category
@@ -135,10 +148,10 @@ const EditEventPage = () => {
             name="image"
             accept="image/*"
             onChange={handleFileChange}
+            disabled={loading}
           />
         </label>
 
-        {/* Display image preview */}
         {imagePreview && (
           <div className="image-preview-container">
             <img
@@ -149,8 +162,14 @@ const EditEventPage = () => {
           </div>
         )}
 
-        <button type="submit">Save Changes</button>
-        <button type="button" onClick={() => navigate("/manage-events")}>
+        <button type="submit" disabled={loading}>
+          {loading ? "Saving..." : "Save Changes"}
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/manage-events")}
+          disabled={loading}
+        >
           Cancel
         </button>
       </form>

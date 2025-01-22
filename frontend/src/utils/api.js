@@ -15,3 +15,4 @@ export const updateEvent = (id, eventData) => API.put(`/events/${id}`, eventData
 export const deleteEvent = (id) => API.delete(`/events/${id}`);
 export const fetchEventDetails = (id) => API.get(`/events/${id}`);
 export const fetchCreatorEvents = async (creatorId) => API.get(`/events/creator/${creatorId}`);
+export const joiningEvent = (eventId, userId) => API.post(`/events/${eventId}/join`, userId);
