@@ -157,9 +157,11 @@ For queries, suggestions, or feedback, reach out to us:
 
 ### 🎨 **Dashboard View**  
 *Manage all your events from a single, clean dashboard!*  
-![Dashboard Screenshot](https://via.placeholder.com/800x400)  
+![Dashboard Screenshot](https://github.com/user-attachments/assets/6a445033-b88b-4d31-88d6-5817535bbb8f)
+
 
 ### 📅 **Event Creation Page**  
 *Create events with customizable options.*  
-![Event Creation Screenshot](https://via.placeholder.com/800x400)  
+![Event Creation Screenshot](https://github.com/user-attachments/assets/57fc392d-5004-479d-a153-141f9b477663)
+
 
