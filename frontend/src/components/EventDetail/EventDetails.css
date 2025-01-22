@@ -22,7 +22,6 @@
     .event-content {
       flex-direction: row;
       gap: 40px;
-      align-items: center;
     }
   }
   
@@ -53,7 +52,7 @@
   
   .event-description {
     font-size: 1rem;
-    color: #666;
+    color: #3a3434;
     line-height: 1.6;
   }
   
@@ -66,7 +65,6 @@
   .event-poster {
     width: 100%;
     max-width: 600px;
-    min-width: 500px;
     height: auto;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
