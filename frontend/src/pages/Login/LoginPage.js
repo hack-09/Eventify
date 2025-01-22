@@ -30,7 +30,6 @@ const LoginPage = () => {
         try {
             const data = await login(formData);
             localStorage.setItem('token', data.token);
-            alert('Login successful!');
             navigate('/dashboard');
         } catch (error) {
             alert('Login failed. Please try again.');

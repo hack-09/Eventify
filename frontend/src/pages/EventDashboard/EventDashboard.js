@@ -81,7 +81,7 @@ const EventDashboard = () => {
           />
           <button
             className="filter-icon-button"
-            onClick={() => setIsFilterPanelOpen(true)}
+            onClick={() => {isFilterPanelOpen ? setIsFilterPanelOpen(false) : setIsFilterPanelOpen(true)}}
           >
             <i className="fas fa-sliders-h"></i> {/* Font Awesome filter icon */}
           </button>

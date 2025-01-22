@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import "./Navbar.css"; // Custom CSS for styling
 
 function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // Check login state from localStorage
+  let location = useLocation();
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Assuming auth token is stored here
-    setIsLoggedIn(!!token); // Set isLoggedIn to true if token exists
-  }, []);
+  }, [location]);
+
 
   // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token from localStorage
-    setIsLoggedIn(false);
     navigate("/"); // Redirect to login page
   };
 
@@ -57,15 +54,15 @@ function Navbar() {
         <i className="fas fa-tasks"></i> <span>Manage Events</span>
         </NavLink>
 
-        {isLoggedIn ? (
+        {localStorage.getItem('token') ? 
           <button className="nav-item logout-btn" onClick={handleLogout}>
             <i className="fas fa-sign-out-alt"></i> <span>Logout</span>
           </button>
-        ) : (
+         : 
           <NavLink to="/" activeClassName="active" className="nav-item">
             <i className="fas fa-sign-in-alt"></i> <span>Login</span>
           </NavLink>
-        )}
+        }
       </div>
     </nav>
   );
