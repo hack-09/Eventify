@@ -58,6 +58,31 @@
     border-color: #28a745;
 }
 
+.password-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.password-wrapper input {
+    flex: 1;
+    padding-right: 50px; /* Add space for the button */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.toggle-password:hover {
+    text-decoration: underline;
+}
+
 /* Button styling */
 .btn-primary {
     width: 100%;
