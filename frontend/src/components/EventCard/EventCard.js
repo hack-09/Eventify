@@ -1,5 +1,4 @@
 import React from "react";
-import axios from 'axios';  // Importing Axios for making HTTP requests
 import { deleteEvent, joiningEvent } from "../../utils/api";  // Importing API utility functions for delete and join event
 import { Link, useNavigate } from "react-router-dom";  // Importing Link and useNavigate for routing navigation
 import { getUserIdFromToken } from '../../utils/tokenHelper';  // Importing function to extract userId from token

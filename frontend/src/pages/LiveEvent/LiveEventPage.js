@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getUserIdFromToken } from '../../utils/tokenHelper';
 import { fetchEventDetails } from '../../utils/api';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import socket from '../../utils/socket';
 import './LiveEventPage.css';
 
-const socket = io(`${process.env.REACT_APP_API_CALL}`); // Replace with your backend URL
+// const socket = io(`${process.env.REACT_APP_API_CALL}`, {
+//     transports: ["websocket"],
+// });
+//    // Replace with your backend URL
 
 const LiveEventPage = () => {
     const { id: eventId } = useParams(); 
