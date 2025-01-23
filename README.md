@@ -149,7 +149,7 @@ For queries, suggestions, or feedback, reach out to us:
 ---
 
 ## 🌟 **Live Demo**  
-🔗 Check out the live deployment here: [Event Management Platform](https://your-live-url.com)  
+🔗 Check out the live deployment here: [Event Management Platform](https://event-management-platform-beta.vercel.app/)  
 
 ---
 
