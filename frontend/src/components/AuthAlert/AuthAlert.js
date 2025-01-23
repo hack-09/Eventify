@@ -4,6 +4,7 @@ import './AlertMessage.css'; // Importing styles for the alert
 
 // Functional component to display an alert for restricted access
 const AuthAlert = ({ message }) => {
+    // eslint-disable-next-line
     const [visible, setVisible] = useState(true); // State to control the visibility of the alert
     const navigate = useNavigate(); // Hook to programmatically navigate between routes
 
