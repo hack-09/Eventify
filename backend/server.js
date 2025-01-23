@@ -25,7 +25,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
     cors: {
-        origin: process.env.CORS_ORIGIN, // React frontend
+        origin: process.env.CORS_ORIGIN || '*', // React frontend
         methods: ['GET', 'POST'],
     },
 });
@@ -35,7 +35,7 @@ connectDB();
 
 // Middleware setup
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN || '*',
     methods: ['GET', 'POST','PUT','DELETE']
 })); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
