@@ -26,8 +26,8 @@ The **Event Management Platform** is your **one-stop solution** for organizing e
   - Event Name  
   - Description  
   - Date & Time  
-  - Location  
-  - Ticket Types & Pricing  
+  - Category  
+  - Event Poster  
 
 ### 👥 **Real-Time Attendee List**  
 - Show the **number of attendees** for each event in real-time.  
