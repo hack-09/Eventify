@@ -75,7 +75,7 @@ const eventSocket = (io) => {
                 count: eventsAttendees[eventId].length,
             });
 
-            console.log(`User ${username} joined meeting ${meetingId}`);
+            console.log(`User ${username} joined meeting ${eventId}`);
         });
 
         // Handle user leaving an event
@@ -95,7 +95,7 @@ const eventSocket = (io) => {
                 attendees: eventsAttendees[eventId] || [],
                 count: eventsAttendees[eventId]?.length || 0,
             });
-            console.log(`User ${userId} left meeting ${meetingId}`);
+            console.log(`User ${userId} left meeting ${eventId}`);
         });
 
         // Handle socket disconnection
