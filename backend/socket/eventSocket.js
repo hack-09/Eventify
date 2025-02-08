@@ -57,6 +57,8 @@ const eventSocket = (io) => {
 
             socket.userData = { eventId, userId };
 
+            socket.join(eventId);
+            
             // Initialize attendee list if not already present for the event
             if (!eventsAttendees[eventId]) eventsAttendees[eventId] = [];
 
@@ -72,8 +74,6 @@ const eventSocket = (io) => {
                 attendees: eventsAttendees[eventId],
                 count: eventsAttendees[eventId].length,
             });
-
-            socket.join(eventId);
         });
 
         // Handle user leaving an event
