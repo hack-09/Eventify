@@ -25,7 +25,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
     cors: {
-        origin: process.env.CORS_ORIGIN || '*', // React frontend
+        origin: '*', // React frontend
         methods: ['GET', 'POST'],
     },
 });
