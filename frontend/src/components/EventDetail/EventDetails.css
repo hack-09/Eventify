@@ -79,9 +79,9 @@
   border-bottom: 2px solid #e2e8f0;
 }
 
-.event-title {
+.event-content .event-title {
   font-size: 2.5rem;
-  color: #2d3748;
+  color: #ffffff !important;
   margin-bottom: 1rem;
 }
 
