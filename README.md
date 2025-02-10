@@ -164,7 +164,13 @@ For queries, suggestions, or feedback, reach out to us:
 
 ### 🎨 **Dashboard View**  
 *Manage all your events from a single, clean dashboard!*  
-![Dashboard Screenshot](https://github.com/user-attachments/assets/6a445033-b88b-4d31-88d6-5817535bbb8f)  
+![Dashboard Screenshot](https://github.com/user-attachments/assets/ac28b19c-2afe-4a6d-9c0e-c445d9c6c958)
+
+
+### 📅 **Event Deatil Page**  
+*Detailed information of event.*  
+![Event Detail](https://github.com/user-attachments/assets/4bd9112e-369b-4bb2-b45b-a61074b6be4c)
+
 
 ### 📅 **Event Creation Page**  
 *Create events with customizable options.*  
