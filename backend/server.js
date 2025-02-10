@@ -6,12 +6,21 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
+const rateLimit = require('express-rate-limit');
 
 // Importing custom modules
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const eventSocket = require('./socket/eventSocket');
+
+// Rate limit: 100 requests per 15 minutes
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 50, // Limit each IP to 50 requests per windowMs
+    message: "Too many requests from this IP, please try again later.",
+    headers: true,
+});
 
 // Load environment variables
 dotenv.config();
@@ -42,7 +51,7 @@ app.use(express.json()); // Parse incoming JSON requests
 
 // API Routes
 app.use('/api/auth', authRoutes); // Authentication routes
-app.use('/api/events', eventRoutes); // Event routes
+app.use('/api/events', eventRoutes, limiter); // Event routes
 
 // Socket connection setup
 eventSocket(io); // Setup real-time socket communication for events

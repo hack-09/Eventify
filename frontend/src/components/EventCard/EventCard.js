@@ -1,59 +1,98 @@
 import React from "react";
-import { deleteEvent, joiningEvent } from "../../utils/api";  // Importing API utility functions for delete and join event
-import { Link, useNavigate } from "react-router-dom";  // Importing Link and useNavigate for routing navigation
-import { getUserIdFromToken } from '../../utils/tokenHelper';  // Importing function to extract userId from token
-import './EventCard.css';  // Importing CSS for styling
+import { deleteEvent, joiningEvent } from "../../utils/api";
+import { Link, useNavigate } from "react-router-dom";
+import { getUserIdFromToken } from '../../utils/tokenHelper';
+import { FaEdit, FaTrash, FaCalendarAlt, FaUsers, FaInfoCircle, FaSignInAlt } from "react-icons/fa";
+import './EventCard.css';
 
-// Functional component to display an event card
 const EventCard = ({ event, showManagementOptions, onEventUpdated }) => {
-  const navigate = useNavigate();  // Hook to programmatically navigate between routes
+  const navigate = useNavigate();
 
-  // Function to handle event deletion
   const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this event?")) {  // Confirmation dialog before deleting
+    if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        await deleteEvent(event._id);  // Call delete event API with the event ID
+        await deleteEvent(event._id);
         if (onEventUpdated) {
-          onEventUpdated(event._id);  // Pass the deleted event ID to callback function
+          onEventUpdated(event._id);
         }
       } catch (err) {
-        console.error("Failed to delete event:", err);  // Log error if deletion fails
+        console.error("Failed to delete event:", err);
       }
     }
   };
 
-  // Function to handle joining an event
   const joinEvent = async (eventId) => {
-    const userId = getUserIdFromToken();  // Extract userId from token
+    const userId = getUserIdFromToken();
     if (!userId) {
-      alert('Please log in to join events.');  // Alert if user is not logged in
+      alert('Please log in to join events.');
       return;
     }
 
     try {
-      await joiningEvent(eventId, userId);  // Call API to join event with eventId and userId
-      navigate(`/event/${event._id}/join`);  // Navigate to the event join page
+      await joiningEvent(eventId, userId);
+      navigate(`/event/${event._id}/join`);
     } catch (error) {
-      console.error('Error joining event:', error);  // Log error if joining fails
-      alert(error.response?.data?.message || 'Failed to join event.');  // Show error message from response
+      console.error('Error joining event:', error);
+      alert(error.response?.data?.message || 'Failed to join event.');
     }
   };
 
-  return (
-    <div className="event-card">  {/* Main container for the event card */}
-      <h3>{event.name}</h3>  {/* Event name */}
-      <p>{event.description}</p>  {/* Event description */}
-      <p>{new Date(event.date).toLocaleString()}</p>  {/* Event date formatted as a readable string */}
-      <p>Category: {event.category}</p>  {/* Event category */}
+  // Format date and time
+  const eventDate = new Date(event.date);
+  const formattedDate = eventDate.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+  const formattedTime = eventDate.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 
-      {/* Conditional rendering of management options */}
-      {showManagementOptions && <Link to={`/event/edit/${event._id}`}>Edit Event</Link>}  
-      {showManagementOptions && <button type="button" onClick={handleDelete}>Delete</button>}
+  return (
+    <div className="event-card">
+      <div className="card-header">
+        <h3 className="event-title">{event.name}</h3>
+        <span className="event-category">{event.category}</span>
+      </div>
       
-      <Link to={`/event/${event._id}`}>Event Details</Link>  {/* Link to view event details */}
-      <button onClick={() => joinEvent(event._id)}>Join Event</button>  {/* Button to join the event */}
+      <div className="card-content">
+        <p className="event-description">{event.description}</p>
+        
+        <div className="event-details">
+          <div className="detail-item">
+            <FaCalendarAlt className="detail-icon" />
+            <div>
+              <div className="detail-date">{formattedDate}</div>
+              <div className="detail-time">{formattedTime}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card-footer">
+        <div className="button-group">
+          <Link to={`/event/${event._id}`} className="btn details-btn">
+            <FaInfoCircle /> Details
+          </Link>
+          <button onClick={() => joinEvent(event._id)} className="btn join-btn">
+            <FaSignInAlt /> Join
+          </button>
+        </div>
+
+        {showManagementOptions && (
+          <div className="management-buttons">
+            <Link to={`/event/edit/${event._id}`} className="btn edit-btn">
+              <FaEdit /> Edit
+            </Link>
+            <button onClick={handleDelete} className="btn delete-btn">
+              <FaTrash /> Delete
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default EventCard;  // Exporting the EventCard component for use in other parts of the app
+export default EventCard;

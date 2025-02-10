@@ -1,60 +1,138 @@
-import React, { useEffect, useState } from "react";  // Importing React, useEffect, and useState hooks for component logic
-import { useParams } from "react-router-dom";  // Importing useParams to access route parameters
-import './EventDetails.css';  // Importing CSS for styling
-import { fetchEventDetails } from "../../utils/api";  // Importing API function to fetch event details
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaCalendarAlt, FaClock, FaTag, FaArrowLeft, FaShare, FaMapMarkerAlt } from "react-icons/fa";
+import './EventDetails.css';
+import { fetchEventDetails } from "../../utils/api";
 
-// Functional component to display the details of a specific event
 const EventDetails = () => {
-  const { eventId } = useParams();  // Getting the eventId from the route parameters
-  const [event, setEvent] = useState(null);  // State to hold the event details
-  const [loading, setLoading] = useState(true);  // State to manage loading state
-  const [error, setError] = useState(null);  // State to manage any errors
+  const { eventId } = useParams();
+  const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // useEffect to fetch event details when component mounts
   useEffect(() => {
     const loadEventDetails = async () => {
       try {
-        const { data } = await fetchEventDetails(eventId);  // Fetch event details using API function
-        setEvent(data);  // Set the fetched event data to state
-        setLoading(false);  // Set loading state to false after data is fetched
+        const { data } = await fetchEventDetails(eventId);
+        setEvent(data);
+        setLoading(false);
       } catch (err) {
-        console.error("Failed to fetch event details:", err);  // Log any errors
-        setError("Failed to load event details. Please try again later.");  // Set an error message
-        setLoading(false);  // Set loading state to false if there's an error
+        console.error("Failed to fetch event details:", err);
+        setError("Failed to load event details. Please try again later.");
+        setLoading(false);
       }
     };
 
-    loadEventDetails();  // Call the function to fetch event details
-  }, [eventId]);  // Dependency: Fetch event details whenever the eventId changes
+    loadEventDetails();
+  }, [eventId]);
 
-  if (loading) return <p>Loading event details...</p>;  // Display loading message while fetching data
-  if (error) return <p>{error}</p>;  // Display error message if fetching fails
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+      <p>Loading event details...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="error-container">
+      <div className="error-alert">
+        ⚠️ {error}
+        <button onClick={() => window.location.reload()}>Try Again</button>
+      </div>
+    </div>
+  );
+
+  const eventDate = new Date(event.date);
+  const formattedDate = eventDate.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+  const formattedTime = eventDate.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 
   return (
-    <div className="event-details-container">  {/* Main container for event details */}
+    <div className="event-details-container">
+      <button className="back-button" onClick={() => navigate(-1)}>
+        <FaArrowLeft /> Back to Events
+      </button>
+
       <div className="event-content">
-        {/* Left side: Event details */}
-        <div className="event-details">
-          <h1 className="event-title">{event.name}</h1>  {/* Display event name */}
-          <p className="event-date-time">
-            <strong>Date & Time:</strong> {new Date(event.date).toLocaleString()}  {/* Format and display event date and time */}
-          </p>
-          <h2 className="event-description-title">Description</h2>  {/* Section heading for event description */}
-          <p className="event-description">{event.description}</p>  {/* Display event description */}
-          <h2 className="event-description-title">Category</h2>  {/* Section heading for event category */}
-          <p className="event-description">{event.category}</p>  {/* Display event category */}
+        <div className="event-header">
+          <h1 className="event-title">{event.name}</h1>
+          <div className="event-meta">
+            <span className="event-category">
+              <FaTag /> {event.category}
+            </span>
+            {event.location && (
+              <span className="event-location">
+                <FaMapMarkerAlt /> {event.location}
+              </span>
+            )}
+          </div>
         </div>
-        {/* Right side: Event poster */}
-        <div className="event-poster-wrapper">
-          <img
-            src={event.image}  
-            alt={`${event.name} poster`} 
-            className="event-poster"
-          />
+
+        <div className="event-grid">
+          <div className="event-poster-wrapper">
+            <img
+              src={event.image}
+              alt={`${event.name} poster`}
+              className="event-poster"
+            />
+            <div className="event-actions">
+              <button className="btn primary-btn">
+                <FaShare /> Share Event
+              </button>
+              <button className="btn cta-btn">
+                Join Now
+              </button>
+            </div>
+          </div>
+
+          <div className="event-info">
+            <div className="info-card">
+              <div className="info-item">
+                <FaCalendarAlt className="info-icon" />
+                <div>
+                  <h3>Date</h3>
+                  <p>{formattedDate}</p>
+                </div>
+              </div>
+              <div className="info-item">
+                <FaClock className="info-icon" />
+                <div>
+                  <h3>Time</h3>
+                  <p>{formattedTime}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="description-card">
+              <h2>Event Description</h2>
+              <p className="event-description">{event.description}</p>
+            </div>
+
+            {event.agenda && (
+              <div className="agenda-card">
+                <h2>Event Agenda</h2>
+                <ul className="agenda-list">
+                  {event.agenda.map((item, index) => (
+                    <li key={index}>
+                      <span className="agenda-time">{item.time}</span>
+                      <span className="agenda-title">{item.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default EventDetails;  // Exporting the EventDetails component for use in other parts of the app
+export default EventDetails;

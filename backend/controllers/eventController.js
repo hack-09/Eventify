@@ -41,12 +41,47 @@ exports.createEvent = async (req, res) => {
  */
 exports.getEvents = async (req, res) => {
     try {
-        const events = await Event.find().populate('createdBy', 'name').exec(); // Populate creator details
-        res.status(200).json(events);
+        const { title, category, date, type, page = 1, limit = 10 } = req.query;
+        const query = {};
+
+        // Search by title
+        if (title) {
+            query.name = { $regex: title, $options: "i" }; // Case-insensitive search
+        }
+
+        // Filter by category
+        if (category) {
+            query.category = category;
+        }
+
+        // Filter by date
+        if (date) {
+            query.date = date;
+        }
+
+        // Filter by event type
+        const currentDate = new Date();
+        if (type === "upcoming") {
+            query.date = { $gte: currentDate };
+        } else if (type === "past") {
+            query.date = { $lt: currentDate };
+        }
+
+        const events = await Event.find(query)
+            .populate("createdBy", "name")
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+            .lean()
+            .exec();
+
+        const totalCount = await Event.countDocuments(query);
+
+        res.status(200).json({ events, totalPages: Math.ceil(totalCount / limit) });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch events' });
+        res.status(500).json({ error: "Failed to fetch events" });
     }
 };
+
 
 /**
  * Fetch details of a specific event.

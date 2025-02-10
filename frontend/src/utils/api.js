@@ -10,7 +10,7 @@ API.interceptors.request.use((req) => {
     return req;
 });
 
-export const fetchEvents = () => API.get('/events');
+export const fetchEvents = (filters, page, limit = 10) => API.get('/events', {params: { ...filters, page, limit },});
 export const createEvent = (eventData) => API.post('/events', eventData);
 export const updateEvent = (id, eventData) => API.put(`/events/${id}`, eventData);
 export const deleteEvent = (id) => API.delete(`/events/${id}`);

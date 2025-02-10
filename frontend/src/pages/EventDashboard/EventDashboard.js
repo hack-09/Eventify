@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import EventCard from "../../components/EventCard/EventCard";
-import debounce from "lodash.debounce";
 import { fetchEvents } from "../../utils/api";
-import "./EventDashboard.css"; // Importing custom CSS for styles
+import Footer from "../../components/footer/Footer";
+import { FaSearch, FaFilter, FaCalendarAlt, FaTimes, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import "./EventDashboard.css";
 
 const EventDashboard = () => {
   const [events, setEvents] = useState([]);
@@ -13,162 +14,191 @@ const EventDashboard = () => {
     date: "",
     type: "all",
   });
-  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false); // State for the filter panel
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 6;
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     loadEvents();
-    // eslint-disable-next-line
-  }, [filters]);
+  }, [currentPage]);
 
   const loadEvents = async () => {
+    setLoading(true);
     try {
-      const response = await fetchEvents(filters);
-      setLoading(false);
-      setEvents(response.data);
+      const response = await fetchEvents(filters, currentPage, eventsPerPage);
+      setEvents(response.data.events);
+      setTotalPages(response.data.totalPages);
     } catch (err) {
       console.error("Failed to fetch events:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleFilterChange = debounce((key, value) => {
+  const handleFilterChange = (key, value) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [key]: value,
     }));
-  }, 1);
-
-  const filterEvents = () => {
-    const currentDate = new Date();
-
-    return events.filter((event) => {
-      const eventDate = new Date(event.date);
-
-      if (filters.type === "upcoming" && eventDate < currentDate) return false;
-      if (filters.type === "past" && eventDate > currentDate) return false;
-
-      if(event.name){
-        if (filters.title && !event.name.toLowerCase().includes(filters.title.toLowerCase())) {
-          return false;
-        }
-      }
-
-      if (filters.category && event.category !== filters.category) {
-        return false;
-      }
-
-      if (filters.date && eventDate.toISOString().split("T")[0] !== filters.date) {
-        return false;
-      }
-
-      return true;
-    });
   };
 
-  const filteredEvents = filterEvents();
+  const handleSearch = async (e) => {
+    if (e.key === "Enter") {
+      setCurrentPage(1);
+      loadEvents();
+    }
+  };
+
+  const handleApplyFilters = () => {
+    setCurrentPage(1);
+    loadEvents();
+    setIsFilterPanelOpen(false);
+  };
+
+  const resetFilters = () => {
+    setFilters({ title: "", category: "", date: "", type: "all" });
+    setCurrentPage(1);
+    loadEvents();
+  };
 
   return (
     <div className="dashboard-container">
       <h1 className="dashboard-title">Event Dashboard</h1>
 
-      <div className="filters">
-        <div className="search-bar-container">
+      {/* Search and Filter Bar */}
+      <div className="search-filter-bar">
+        <div className="search-container">
+          <FaSearch className="search-icon" />
           <input
             type="text"
             name="title"
             value={filters.title}
             onChange={(e) => handleFilterChange("title", e.target.value)}
+            onKeyDown={handleSearch}
             placeholder="Search events..."
-            className="filter-input search-bar"
+            className="search-input"
           />
-          <button
-            className="filter-icon-button"
-            onClick={() => {isFilterPanelOpen ? setIsFilterPanelOpen(false) : setIsFilterPanelOpen(true)}}
-          >
-            <i className="fas fa-sliders-h"></i> {/* Font Awesome filter icon */}
-          </button>
         </div>
+        <button
+          className="filter-button"
+          onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
+        >
+          <FaFilter /> Filters
+        </button>
       </div>
 
-      {/* Side filter panel */}
-      {isFilterPanelOpen && (
-        <div className={`filter-panel ${isFilterPanelOpen ? "open" : ""}`}>
-          <button
-            className="close-button"
-            onClick={() => setIsFilterPanelOpen(false)}
-          >
-            &times;
-          </button>
-          <div className="filter-group category">
-            <label className="filter-label">Category:</label>
-            <select
-              value={filters.category}
-              onChange={(e) => handleFilterChange("category", e.target.value)}
-              className="filter-input"
-            >
-              <option value="">All Categories</option>
-              <option value="Tech Talks">Tech Talks</option>
-              <option value="Workshop">Workshop</option>
-              <option value="Webinars">Webinars</option>
-              <option value="Conference">Conference</option>
-              <option value="Meetup">Meetup</option>
-              <option value="Health Awareness">Health Awareness</option>
-              <option value="Virtual Concerts">Virtual Concerts</option>
-            </select>
-          </div>
+      {/* Filter Panel */}
+      {/* Filter Panel */}
+{isFilterPanelOpen && (
+  <div className={`filter-panel ${isFilterPanelOpen ? "open" : ""}`}>
+    <div className="filter-panel-header">
+      <h3>Filters</h3>
+      <button className="close-button" onClick={() => setIsFilterPanelOpen(false)}>
+        <FaTimes />
+      </button>
+    </div>
 
-          <div className="divider"></div>
+    <div className="filter-group">
+      <label className="filter-label">Category</label>
+      <select
+        value={filters.category}
+        onChange={(e) => handleFilterChange("category", e.target.value)}
+        className="filter-input"
+      >
+        <option value="">All Categories</option>
+        <option value="Tech Talks">Tech Talks</option>
+        <option value="Workshop">Workshop</option>
+        <option value="Webinars">Webinars</option>
+        <option value="Conference">Conference</option>
+        <option value="Meetup">Meetup</option>
+        <option value="Health Awareness">Health Awareness</option>
+        <option value="Virtual Concerts">Virtual Concerts</option>
+      </select>
+    </div>
 
-          <div className="filter-group date">
-            <label className="filter-label">Date:</label>
-            <input
-              type="date"
-              name="date"
-              value={filters.date}
-              onChange={(e) => handleFilterChange("date", e.target.value)}
-              className="filter-input"
-            />
-          </div>
+    <div className="filter-group">
+      <label className="filter-label">Date</label>
+      <div className="date-input-container">
+        <FaCalendarAlt className="date-icon" />
+        <input
+          type="date"
+          name="date"
+          value={filters.date}
+          onChange={(e) => handleFilterChange("date", e.target.value)}
+          className="filter-input date-input"
+        />
+      </div>
+    </div>
 
-          <div className="divider"></div>
-          
-          <div className="filter-group">
-            <label className="filter-label">Event Type:</label>
-            <select
-              value={filters.type}
-              onChange={(e) => handleFilterChange("type", e.target.value)}
-              className="filter-input"
-            >
-              <option value="all">All</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="past">Past</option>
-            </select>
-          </div>
+    <div className="filter-group">
+      <label className="filter-label">Event Type</label>
+      <select
+        value={filters.type}
+        onChange={(e) => handleFilterChange("type", e.target.value)}
+        className="filter-input"
+      >
+        <option value="all">All</option>
+        <option value="upcoming">Upcoming</option>
+        <option value="past">Past</option>
+      </select>
+    </div>
 
-          <div className="filter-group">
-            <button
-              onClick={() =>
-                setFilters({ title: "", category: "", date: "", type: "all" })
-              }
-              className="reset-button"
-            >
-              Reset Filters
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="filter-actions">
+      <button onClick={resetFilters} className="reset-button">
+        Reset Filters
+      </button>
+      <button onClick={handleApplyFilters} className="apply-button">
+        Apply Filters
+      </button>
+    </div>
+  </div>
+)}
 
+
+      {/* Event List */}
       {loading ? (
-        <div className="loading-box">Loading your events...</div>
-      ) : (
-        <div className="event-list">
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((event) => (
-              <EventCard key={event._id} event={event} />
-            ))
-          ) : (
-            <p>No events found matching the criteria.</p>
-          )}
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Loading events...</p>
         </div>
+      ) : (
+        <>
+          <div className="event-list">
+            {events.length > 0 ? (
+              events.map((event) => <EventCard key={event._id} event={event} />)
+            ) : (
+              <div className="no-events-found">
+                <p>No events found matching the criteria.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pagination-controls">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="pagination-button"
+              >
+                <FaArrowLeft /> Previous
+              </button>
+              <span className="page-number">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="pagination-button"
+              >
+                Next <FaArrowRight />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

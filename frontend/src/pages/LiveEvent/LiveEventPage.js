@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getUserIdFromToken } from '../../utils/tokenHelper';
 import { fetchEventDetails } from '../../utils/api';
-// import io from 'socket.io-client';
 import socket from '../../utils/socket';
+import { FaInfoCircle } from "react-icons/fa";
+import { FaUsers, FaComments, FaQuestionCircle, FaPollH, FaPaperPlane, FaSignOutAlt } from 'react-icons/fa';
 import './LiveEventPage.css';
 
 const LiveEventPage = () => {
-    const { id: eventId } = useParams(); 
+    const { id: eventId } = useParams();
     const userId = getUserIdFromToken();
-    const navigate = useNavigate(); // For navigation
+    const navigate = useNavigate();
+    const chatEndRef = useRef(null);
 
     const [attendees, setAttendees] = useState([]);
     const [attendeeCount, setAttendeeCount] = useState(0);
     const [event, setEvent] = useState(null);
-
     const [eventAgenda, setEventAgenda] = useState([]);
     const [chatMessages, setChatMessages] = useState([]);
     const [message, setMessage] = useState('');
@@ -23,18 +24,17 @@ const LiveEventPage = () => {
 
     useEffect(() => {
         const loadEventDetails = async () => {
-          try {
-            const { data } = await fetchEventDetails(eventId); // Fetch single event details
-            setEvent(data);
-          } catch (err) {
-            console.error("Failed to fetch event details:", err);
-          }
+            try {
+                const { data } = await fetchEventDetails(eventId);
+                setEvent(data);
+            } catch (err) {
+                console.error("Failed to fetch event details:", err);
+            }
         };
         loadEventDetails();
-      }, [eventId]);
-      
-    useEffect(() => {
+    }, [eventId]);
 
+    useEffect(() => {
         socket.emit('joinEvent', { eventId, userId });
 
         socket.on('updateEventDetails', async(data) => {
@@ -42,7 +42,7 @@ const LiveEventPage = () => {
                 setEventAgenda(data.eventAgenda || []);
             }
         });
-        
+
         socket.on('updateAttendeeListAndCount', (data) => {
             if (data.eventId === eventId) {
                 setAttendees(data.attendees);
@@ -52,6 +52,7 @@ const LiveEventPage = () => {
 
         socket.on('chatMessage', (newMessage) => {
             setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+            scrollToBottom();
         });
 
         socket.on('newQuestion', (newQuestion) => {
@@ -71,6 +72,10 @@ const LiveEventPage = () => {
             socket.off('updatePoll');
         };
     }, [eventId, userId]);
+
+    const scrollToBottom = () => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     const sendMessage = () => {
         if (message.trim()) {
@@ -98,22 +103,27 @@ const LiveEventPage = () => {
         <div className="live-event-page">
             {/* Header Section */}
             <header className="event-header">
-                <div>
-                    <h1>{event?event.name:"Name"}</h1>
-                    <p>{event? new Date(event.date).toLocaleString():"Date"} | Category: {event?event.category:"Category"}</p>
+                <div className="header-content">
+                    <h1>{event?.name || "Event Name"}</h1>
+                    <div className="event-meta">
+                        <span className="event-date">{event ? new Date(event.date).toLocaleString() : "Date"}</span>
+                        <span className="event-category">{event?.category || "Category"}</span>
+                    </div>
                 </div>
-                <button className="leave-button" onClick={leaveEvent}>Leave Event</button>
+                <button className="leave-button" onClick={leaveEvent}>
+                    <FaSignOutAlt /> Leave Event
+                </button>
             </header>
 
             {/* Main Content */}
             <div className="main-content">
                 {/* Left Column */}
                 <div className="left-column">
-                    <section>
-                        <h2>About the Event</h2>
-                        <p>{event?event.description:"Description"}</p>
+                    <section className="about-section">
+                        <h2><FaInfoCircle /> About the Event</h2>
+                        <p>{event?.description || "Event description"}</p>
                         {eventAgenda.length > 0 && (
-                            <div>
+                            <div className="agenda-section">
                                 <h3>Agenda</h3>
                                 <ul>
                                     {eventAgenda.map((item, index) => (
@@ -124,81 +134,107 @@ const LiveEventPage = () => {
                         )}
                     </section>
 
-                    <section>
-                        <h2>Attendees</h2>
-                        <p>Attendee Count: {attendeeCount}</p>
-                        <ul>
+                    <section className="attendees-section">
+                        <h2><FaUsers /> Attendees ({attendeeCount})</h2>
+                        <div className="attendees-list">
                             {attendees.map((attendee, index) => (
-                                <li key={index}>{attendee.username}</li>
+                                <div key={index} className="attendee">
+                                    <div className="attendee-avatar">
+                                        {attendee.username[0].toUpperCase()}
+                                    </div>
+                                    <span>{attendee.username}</span>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </section>
                 </div>
 
                 {/* Center Content: Live Stream */}
                 <div className="center-content">
-                    <h2>Livestream</h2>
-                    <div className="livestream-placeholder">
-                        <p>Livestream Video Placeholder</p>
+                    <div className="livestream-container">
+                        <div className="livestream-placeholder">
+                            <div className="livestream-overlay">
+                                <h2>Live Stream</h2>
+                                <p>Stream will begin shortly</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 {/* Right Column */}
                 <div className="right-column">
-                    <section>
-                        <h2>Live Chat</h2>
+                    <section className="chat-section">
+                        <h2><FaComments /> Live Chat</h2>
                         <div className="chat-box">
                             {chatMessages.map((msg, index) => (
-                                <p key={index}><strong>{msg.username}:</strong> {msg.text}</p>
+                                <div key={index} className="chat-message">
+                                    <div className="message-avatar">
+                                        {msg.username[0].toUpperCase()}
+                                    </div>
+                                    <div className="message-content">
+                                        <span className="message-username">{msg.username}</span>
+                                        <p>{msg.text}</p>
+                                    </div>
+                                </div>
                             ))}
+                            <div ref={chatEndRef} />
                         </div>
-                        <input
-                            type="text"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            placeholder="Type your message..."
-                        />
-                        <button onClick={sendMessage}>Send</button>
+                        <div className="chat-input">
+                            <input
+                                type="text"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                                placeholder="Type your message..."
+                            />
+                            <button onClick={sendMessage}>
+                                <FaPaperPlane />
+                            </button>
+                        </div>
                     </section>
 
-                    <section>
-                        <h2>Q&A</h2>
-                        <ul>
+                    <section className="qa-section">
+                        <h2><FaQuestionCircle /> Q&A</h2>
+                        <div className="questions-list">
                             {questions.map((question, index) => (
-                                <li key={index}>{question.text}</li>
+                                <div key={index} className="question">
+                                    <div className="question-avatar">
+                                        {question.userId[0].toUpperCase()}
+                                    </div>
+                                    <p>{question.text}</p>
+                                </div>
                             ))}
-                        </ul>
-                        <input
-                            type="text"
-                            placeholder="Ask a question..."
-                            onKeyDown={(e) => e.key === 'Enter' && submitQuestion(e.target.value)}
-                        />
+                        </div>
+                        <div className="question-input">
+                            <input
+                                type="text"
+                                placeholder="Ask a question..."
+                                onKeyDown={(e) => e.key === 'Enter' && submitQuestion(e.target.value)}
+                            />
+                        </div>
                     </section>
 
                     {poll.question && (
-                        <section>
-                            <h2>Poll</h2>
-                            <p>{poll.question}</p>
-                            <ul>
-                                {poll.options.map((option, index) => (
-                                    <li key={index}>
-                                        <button onClick={() => submitPollResponse(option)}>{option}</button>
-                                    </li>
-                                ))}
-                            </ul>
+                        <section className="poll-section">
+                            <h2><FaPollH /> Poll</h2>
+                            <div className="poll-content">
+                                <h3>{poll.question}</h3>
+                                <div className="poll-options">
+                                    {poll.options.map((option, index) => (
+                                        <button 
+                                            key={index} 
+                                            className="poll-option"
+                                            onClick={() => submitPollResponse(option)}
+                                        >
+                                            {option}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </section>
                     )}
                 </div>
             </div>
-
-            {/* Footer */}
-            <footer>
-                <p>Powered by Event Management Platform</p>
-                <p>
-                    <a href="/resources">Resources</a> | 
-                    <a href="/support">Support</a>
-                </p>
-            </footer>
         </div>
     );
 };
