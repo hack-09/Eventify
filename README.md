@@ -1,5 +1,5 @@
 
-# 🎉 **Event Management Platform** 🎉
+# 🎉 **Eventify** 🎉
 
 **A Powerful and Intuitive Platform to Simplify Event Planning, Attendee Management, Ticketing, and Performance Tracking**  
 
